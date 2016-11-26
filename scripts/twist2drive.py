@@ -6,40 +6,59 @@ from geometry_msgs.msg import Twist
 from kingfisher_msgs.msg import Drive
 
 class Node():
-    def __init__(self):
-        rospy.init_node('listener', anonymous=True)
-        rospy.Subscriber("cmd_vel", Twist, self.callback)
-        self.pub = rospy.Publisher("cmd_drive",Drive,queue_size=10)
-        self.driveMsg = Drive()
-        rospy.loginfo("Listening for Twist messages on topic=cmd_vel") 
-        rospy.spin()
+    def __init__(self,linear_scaling,angular_scaling):
+        self.linear_scaling = linear_scaling
+        self.angular_scaling = angular_scaling
+        self.pub = None
+        self.driveMsg =None 
         
     def callback(self,data):
-        rospy.loginfo("RX: Twist "+rospy.get_caller_id())
-        rospy.loginfo("\tlinear:")
-        rospy.loginfo("\t\tx:%f,y:%f,z:%f"%(data.linear.x,
+        rospy.logdebug("RX: Twist "+rospy.get_caller_id())
+        rospy.logdebug("\tlinear:")
+        rospy.logdebug("\t\tx:%f,y:%f,z:%f"%(data.linear.x,
                                             data.linear.y,
                                             data.linear.z))
-        rospy.loginfo("\tangular:")
-        rospy.loginfo("\t\tx:%f,y:%f,z:%f"%(data.angular.x,
+        rospy.logdebug("\tangular:")
+        rospy.logdebug("\t\tx:%f,y:%f,z:%f"%(data.angular.x,
                                             data.angular.y,
                                             data.angular.z))
         # scaling factors
-        linfac = 0.2
-        angfac = 0.05
+        linfac = self.linear_scaling
+        angfac = self.angular_scaling
         self.driveMsg.left = linfac*data.linear.x - angfac*data.angular.z
         self.driveMsg.right = linfac*data.linear.x + angfac*data.angular.z
         
-        rospy.loginfo("TX: Drive ")
-        rospy.loginfo("\tleft:%f, right:%f"%(self.driveMsg.left,
+        rospy.logdebug("TX: Drive ")
+        rospy.logdebug("\tleft:%f, right:%f"%(self.driveMsg.left,
                                              self.driveMsg.right))
         self.pub.publish(self.driveMsg)
 
 
-            
-
 if __name__ == '__main__':
+
+    rospy.init_node('twist2drive', anonymous=True)
+
+    # ROS Parameters
+    in_topic = rospy.get_param('~input_topic','cmd_vel')
+    out_topic = rospy.get_param('~output_topic','cmd_drive')
+    # Scaling from Twist.linear.x to (left+right)
+    linear_scaling = rospy.get_param('~linear_scaling',0.2)
+    # Scaling from Twist.angular.z to (right-left)
+    angular_scaling = rospy.get_param('~angular_scaling',0.05)
+
+    rospy.loginfo("Subscribing to <%s>, Publishing to <%s>"%(in_topic,out_topic))
+    rospy.loginfo("Linear scaleing=%f, Angular scaling=%f"%(linear_scaling,angular_scaling))
+
+    node=Node(linear_scaling,angular_scaling)
+
+    # Publisher
+    node.pub = rospy.Publisher(out_topic,Drive,queue_size=10)
+    node.driveMsg = Drive()
+
+    # Subscriber
+    rospy.Subscriber(in_topic,Twist,node.callback)
+
     try:
-        node=Node()
+        rospy.spin()
     except rospy.ROSInterruptException:
         pass
