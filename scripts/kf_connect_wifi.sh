@@ -11,9 +11,9 @@ export ROS_HOSTNAME=${MY_WLAN}
 #eth0      Link encap:Ethernet  HWaddr 50:7b:9d:b4:82:08  
 #          inet addr:172.20.89.21  Bcast:172.20.91.255  Mask:255.255.252.0
 
-
+# This works
 sudo route add -host 192.168.1.11 gw 192.168.131.230 dev wlan0
 
+# Both work
 rostopic pub -r 10 /cmd_drive kingfisher_msgs/Drive '{left: 0.1, right: 0.0}'
-
 rostopic pub -r 10 /cmd_drive kingfisher_msgs/Drive -- 0.05 0.0
