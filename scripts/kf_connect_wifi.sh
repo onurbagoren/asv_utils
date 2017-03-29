@@ -1,6 +1,7 @@
 # Source this file to set environmental variable and set route
+
 MY_WLAN=192.168.131.221  # Wireless address of my laptop
-KF_WLAN=192.168.131.230 # Wireless address of Kingfisher
+KF_WLAN=192.168.131.203 #230 # Wireless address of Kingfisher
 KF_ETH=192.168.1.11 # Wired for Kingfisher, where ROS master lives
 #sudo route add -net ${KF_ETH} netmask 255.255.255.255 gw ${KF_WLAN}
 export ROS_IP=${MY_WLAN} # My laptop

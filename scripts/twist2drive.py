@@ -31,6 +31,7 @@ class Node():
         rospy.logdebug("TX: Drive ")
         rospy.logdebug("\tleft:%f, right:%f"%(self.driveMsg.left,
                                              self.driveMsg.right))
+        print("left: %f, right: %f"%(self.driveMsg.left,self.driveMsg.right))
         self.pub.publish(self.driveMsg)
 
 
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     angular_scaling = rospy.get_param('~angular_scaling',0.05)
 
     rospy.loginfo("Subscribing to <%s>, Publishing to <%s>"%(in_topic,out_topic))
-    rospy.loginfo("Linear scaleing=%f, Angular scaling=%f"%(linear_scaling,angular_scaling))
+    rospy.loginfo("Linear scaling=%f, Angular scaling=%f"%(linear_scaling,angular_scaling))
 
     node=Node(linear_scaling,angular_scaling)
 
