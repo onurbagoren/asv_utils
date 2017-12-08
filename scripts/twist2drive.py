@@ -31,7 +31,7 @@ class Node():
         rospy.logdebug("TX: Drive ")
         rospy.logdebug("\tleft:%f, right:%f"%(self.driveMsg.left,
                                              self.driveMsg.right))
-        print("left: %f, right: %f"%(self.driveMsg.left,self.driveMsg.right))
+        #rospy.loginfo("left: %f, right: %f"%(self.driveMsg.left,self.driveMsg.right))
         self.pub.publish(self.driveMsg)
 
 

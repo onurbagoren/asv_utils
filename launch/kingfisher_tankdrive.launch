@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <launch>
 
-  <!-- For setting debug level to debug -->
+  <!-- For setting debug level to debug 
   <env name="ROSCONSOLE_CONFIG_FILE" 
        value="$(find kingfisher_utils)/config/custom_rosconsole.conf"/>
-
+  -->
 
 <!-- Joystick Driver -->
 <node pkg="joy" type="joy_node" name="joy">

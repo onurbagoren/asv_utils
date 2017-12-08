@@ -2,16 +2,20 @@
 # license removed for brevity
 
 import rospy
+import time
 from geometry_msgs.msg import Twist
 from kingfisher_msgs.msg import Drive
+from kingfisher_msgs.msg import Course
 
 class Node():
     def __init__(self,linear_scaling,angular_scaling):
         self.linear_scaling = linear_scaling
         self.angular_scaling = angular_scaling
         self.pub = None
-        self.driveMsg =None 
-        
+        self.courseMsg =None 
+        self.t0 = time.time()
+        self.yaw = 0
+
     def callback(self,data):
         rospy.logdebug("RX: Twist "+rospy.get_caller_id())
         rospy.logdebug("\tlinear:")
@@ -25,23 +29,24 @@ class Node():
         # scaling factors
         linfac = self.linear_scaling
         angfac = self.angular_scaling
-        self.driveMsg.left = data.linear.x 
-        self.driveMsg.right = data.angular.z
+        self.courseMsg.speed = linfac*data.linear.x * 3.0
+        #dt = time.time()-self.t0
+        self.courseMsg.yaw += angfac*data.angular.z * 0.2  # fudge
         
-        rospy.logdebug("TX: Drive ")
-        rospy.logdebug("\tleft:%f, right:%f"%(self.driveMsg.left,
-                                             self.driveMsg.right))
-        #print("left: %f, right: %f"%(self.driveMsg.left,self.driveMsg.right))
-        self.pub.publish(self.driveMsg)
+        rospy.logdebug("TX: Course ")
+        rospy.logdebug("\tspeed:%f, yaw:%f"%(self.courseMsg.speed,
+                                             self.courseMsg.yaw))
+        #rospy.loginfo("left: %f, right: %f"%(self.driveMsg.left,self.driveMsg.right))
+        self.pub.publish(self.courseMsg)
 
 
 if __name__ == '__main__':
 
-    rospy.init_node('twist2drive', anonymous=True)
+    rospy.init_node('twist2course', anonymous=False)
 
     # ROS Parameters
     in_topic = rospy.get_param('~input_topic','cmd_vel')
-    out_topic = rospy.get_param('~output_topic','cmd_drive')
+    out_topic = rospy.get_param('~output_topic','cmd_course')
     # Scaling from Twist.linear.x to (left+right)
     linear_scaling = rospy.get_param('~linear_scaling',0.2)
     # Scaling from Twist.angular.z to (right-left)
@@ -53,8 +58,8 @@ if __name__ == '__main__':
     node=Node(linear_scaling,angular_scaling)
 
     # Publisher
-    node.pub = rospy.Publisher(out_topic,Drive,queue_size=10)
-    node.driveMsg = Drive()
+    node.pub = rospy.Publisher(out_topic,Course,queue_size=10)
+    node.courseMsg = Course()
 
     # Subscriber
     rospy.Subscriber(in_topic,Twist,node.callback)
