@@ -4,8 +4,8 @@
 import rospy
 import time
 from geometry_msgs.msg import Twist
-from kingfisher_msgs.msg import Drive
-from kingfisher_msgs.msg import Course
+from heron_msgs.msg import Drive
+from heron_msgs.msg import Course
 
 class Node():
     def __init__(self,linear_scaling,angular_scaling):

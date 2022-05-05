@@ -3,7 +3,7 @@
 
 import rospy
 from geometry_msgs.msg import Twist
-from kingfisher_msgs.msg import Drive
+from heron_msgs.msg import Drive
 
 class Node():
     def __init__(self,linear_scaling,angular_scaling):
