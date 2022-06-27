@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.2)
 project(asv_utils)
 
 ## Find catkin macros and libraries
@@ -97,12 +97,12 @@ project(asv_utils)
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
+# catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES kingfisher_utils
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
-)
+# )
 
 ###########
 ## Build ##
@@ -181,3 +181,5 @@ catkin_package(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+catkin_install_python(PROGRAMS scripts/twist2drive.py)
